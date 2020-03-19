@@ -25,11 +25,18 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('logout', function () {
-        arrayUser.splice(
-            arrayUser.indexOf(socket.Username), 1
-        );
+        arrayUser.splice(arrayUser.indexOf(socket.Username), 1);
         socket.broadcast.emit('serverSendListUser', arrayUser);
     });
+    socket.on('sendMessages', function (data) {
+        io.sockets.emit('serverSendMessages',{userName:socket.Username , content:data})
+    });
+    socket.on('writing',function(){
+        io.sockets.emit('active',socket.Username +"writing");
+    })
+    socket.on('stop-writing',function(){
+        io.sockets.emit('active',"");
+    })
 });
 
 app.get('/', function (req, res) {
