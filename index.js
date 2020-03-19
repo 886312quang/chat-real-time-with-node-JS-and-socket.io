@@ -12,7 +12,9 @@ var arrayUser = [""];
 io.on('connection', function (socket) {
     console.log(socket.id + ' connected');
     socket.on('disconnect', function () {
-        console.log(socket.id + ' disconenct')
+        console.log(socket.id + ' disconenct');
+        arrayUser.splice(arrayUser.indexOf(socket.Username), 1);
+        socket.broadcast.emit('serverSendListUser', arrayUser);
     });
     socket.on('createUser', function (data) {
         if (arrayUser.indexOf(data) >= 0) {
