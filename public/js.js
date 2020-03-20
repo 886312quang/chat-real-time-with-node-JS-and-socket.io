@@ -20,33 +20,59 @@ socket.on('serverSendListUser', function (data) {
 
     });
 });
-socket.on('serverSendMessages',function(data){
-    $('#messages').append('<div class="card-block ms">'
-                    +data.userName+': '+data.content+'</div>');
+socket.on('serverSendRoom', function (data) {
+    $('#roomContent').html('');
+    data.map(function (r) {
+        $('#roomContent').append('<div class="room">' + r + "</div>");
+
+    });
 });
-socket.on('active',function(data){
+socket.on('serverSendMessages', function (data) {
+    $('#messages').append('<div class="card-block ms">'
+        + data.userName + ': ' + data.content + '</div>');
+});
+socket.on('active', function (data) {
     $('#activeMessages').html(data);
+});
+socket.on('roomNow', function (data) {
+    $('#currentRoom').html(data);
 });
 $(document).ready(function () {
     $('#createUser').show();
     $('#chatForm').hide();
 
-    $('#textarea').focusin(function(){
+    $('#textarea').focusin(function () {
         socket.emit('writing');
     })
-    $('#textarea').focusout(function(){
+    $('#textarea').focusout(function () {
         socket.emit('stop-writing');
     })
     $('#create').click(function () {
         socket.emit('createUser', $('#username').val());
     });
-    $('#exit').click(function(){
+    $('#createRoom').click(function () {
+        socket.emit('createRoom', $('#roomName').val());
+    });
+    $('#exit').click(function () {
         socket.emit('logout');
         $('#createUser').show();
         $('#chatForm').hide();
     })
-    $('#sendMessages').click(function(){
-        socket.emit('sendMessages',$('#textarea').val());
-      
+    textarea.addEventListener('keydown', function (event) {
+        if (event.which === 13 && event.shiftKey == false) {
+            // Emit to server input
+            socket.emit('sendMessages', $('#textarea').val());
+           $('#textarea').val(" ");
+            event.preventDefault();
+        }
+    })
+    $('#sendMessages').click(function () {
+        socket.emit('sendMessages', $('#textarea').val());
+
+    });
+    //Xuli jq
+    $('#checkMenu').click(function () {
+        $('#menu').toggleClass('hide');
+        $('#right').toggleClass('next');
     })
 })
